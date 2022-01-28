@@ -264,7 +264,7 @@ async Task CommitChangesAsync()
     string gitCommand = "git";
     string gitLfsInstall = "lfs install";
     string gitLfsTrack = @"lfs track ""*.exe""";
-    string gitLfsmigrate = @"git lfs migrate import --include=""*.exe""";
+    string gitLfsmigrate = @"lfs migrate import --include=""*.exe""";
     string gitAddArgument = @"add -A";
     string gitVersionArgument = @"--version";
     string gitCommitArgument = @$"commit -m ""added {addedCount} new and removed {removedCount} commands from the install script""";
