@@ -277,16 +277,6 @@ async Task CommitChangesAsync()
         Process.Start(gitCommand, gitAddArgument);
         Process.Start(gitCommand, gitCommitArgument);
         Console.ResetColor();
-        //using PowerShell powershell = PowerShell.Create();
-        //powershell.AddScript(@"git --version");
-        //powershell.AddScript(@$"git commit -m 'added {addedCount} new and removed {removedCount} commands from the install script'");
-
-        //var results = await powershell.InvokeAsync();
-
-        //if (powershell.Streams.Error.Count > 0)
-        //{
-        //    throw powershell.Streams.Error[0].Exception;
-        //}
         Console.Clear();
         Console.BackgroundColor = ConsoleColor.White;
         Console.ForegroundColor = ConsoleColor.DarkGreen;
