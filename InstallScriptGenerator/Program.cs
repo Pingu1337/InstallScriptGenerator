@@ -284,7 +284,11 @@ async Task InitializeGit()
     string gitLfsInstall = "lfs install";
     string gitLfsTrack = @"lfs track ""*.exe""";
     string gitLfsmigrate = @"lfs migrate import --include=""*.exe""";
+    string gitAddInCaseArgument = @"add -A";
+    string gitCommitInCaseArgument = @"commit -m ""Automatic commit before lfs migrate """;
     await RunProcessAsync(gitCommand, gitVersionArgument);
+    await RunProcessAsync(gitCommand, gitAddInCaseArgument);
+    await RunProcessAsync(gitCommand, gitCommitInCaseArgument);
     await RunProcessAsync(gitCommand, gitLfsInstall);
     await RunProcessAsync(gitCommand, gitLfsTrack);
     await RunProcessAsync(gitCommand, gitLfsmigrate);
