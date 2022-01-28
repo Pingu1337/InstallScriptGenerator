@@ -11,6 +11,21 @@ if (!File.Exists(@"install.bat"))
     await File.WriteAllTextAsync(@"install.bat", "");
 }
 
+if (!File.Exists(@"config.cfg"))
+{
+    await File.WriteAllTextAsync(@"config.cfg", "Initialized=false");
+}
+
+string cfg = await File.ReadAllTextAsync(@"config.cfg");
+string[] cfgContent = cfg.Split("=");
+bool IsInitialized = cfgContent[1] == "true";
+
+if (!IsInitialized)
+{
+    await InitializeGit();
+    await File.WriteAllTextAsync(@"config.cfg", "Initialized=true");
+}
+
 string ScriptFile = await File.ReadAllTextAsync(@"install.bat");
 string[] commands = ScriptFile.Split(separatingStrings, System.StringSplitOptions.RemoveEmptyEntries);
 List<string> cmdList = new List<string>();
@@ -257,7 +272,24 @@ static Task<int> RunProcessAsync(string fileName, string arg)
     return tcs.Task;
 }
 
-
+async Task InitializeGit()
+{
+    Console.Clear();
+    Console.BackgroundColor = ConsoleColor.White;
+    Console.ForegroundColor = ConsoleColor.Green;
+    Console.WriteLine("First time git initialization running...");
+    await Task.Delay(100);
+    string gitCommand = "git";
+    string gitVersionArgument = @"--version";
+    string gitLfsInstall = "lfs install";
+    string gitLfsTrack = @"lfs track ""*.exe""";
+    string gitLfsmigrate = @"lfs migrate import --include=""*.exe""";
+    await RunProcessAsync(gitCommand, gitVersionArgument);
+    await RunProcessAsync(gitCommand, gitLfsInstall);
+    await RunProcessAsync(gitCommand, gitLfsTrack);
+    await RunProcessAsync(gitCommand, gitLfsmigrate);
+    Console.ResetColor();
+}
 
 async Task CommitChangesAsync()
 {
@@ -273,17 +305,8 @@ async Task CommitChangesAsync()
     {
         Console.Clear();
         Console.BackgroundColor = ConsoleColor.White;
-        Console.ForegroundColor = ConsoleColor.Green;
-        Process.Start(gitCommand, gitAddArgument);
-        Process.Start(gitCommand, gitCommitArgument);
-        Console.ResetColor();
-        Console.Clear();
-        Console.BackgroundColor = ConsoleColor.White;
         Console.ForegroundColor = ConsoleColor.DarkGreen;
         await RunProcessAsync(gitCommand, gitVersionArgument);
-        await RunProcessAsync(gitCommand, gitLfsInstall);
-        await RunProcessAsync(gitCommand, gitLfsTrack);
-        await RunProcessAsync(gitCommand, gitLfsmigrate);
         await RunProcessAsync(gitCommand, gitAddArgument);
         await RunProcessAsync(gitCommand, gitCommitArgument);
         await RunProcessAsync(gitCommand, gitPushArgument);
