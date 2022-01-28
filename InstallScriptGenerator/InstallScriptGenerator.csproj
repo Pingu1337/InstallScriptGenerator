@@ -5,11 +5,25 @@
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <PackageIcon>icon.png</PackageIcon>
+    <RepositoryUrl>https://github.com/Pingu1337/InstallScriptGenerator</RepositoryUrl>
+    <ApplicationIcon>icon.ico</ApplicationIcon>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="icon.ico" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.PowerShell.SDK" Version="7.3.0-preview.1" />
     <PackageReference Include="System.Management.Automation" Version="7.3.0-preview.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="icon.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
   </ItemGroup>
 
 </Project>

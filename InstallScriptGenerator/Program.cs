@@ -1,4 +1,5 @@
-﻿using System.Management.Automation;
+﻿using System.Diagnostics;
+using System.Management.Automation;
 
 
 string[] separatingStrings = { "&&", "" };
@@ -237,26 +238,37 @@ while (true)
 
 async Task CommitChangesAsync()
 {
+    string gitCommand = "git";
+    string gitAddArgument = @"add -A";
+    string gitVersionArgument = @"--version";
+    string gitCommitArgument = @$"commit -m ""added {addedCount} new and removed {removedCount} commands from the install script""";
+    string gitPushArgument = @"push our_remote";
     try
     {
-        using PowerShell powershell = PowerShell.Create();
-        powershell.AddScript(@"git --version");
-        powershell.AddScript(@$"git commit -m 'added {addedCount} new and removed {removedCount} commands from the install script'");
-
-        var results = await powershell.InvokeAsync();
-
-        if (powershell.Streams.Error.Count > 0)
-        {
-            throw powershell.Streams.Error[0].Exception;
-        }
         Console.Clear();
         Console.BackgroundColor = ConsoleColor.White;
-        Console.ForegroundColor = ConsoleColor.Black;
-        foreach (var msg in results)
-        {
-            Console.WriteLine(msg);
-        }
+        Console.ForegroundColor = ConsoleColor.Green;
+        Process.Start(gitCommand, gitAddArgument);
+        Process.Start(gitCommand, gitCommitArgument);
         Console.ResetColor();
+        //using PowerShell powershell = PowerShell.Create();
+        //powershell.AddScript(@"git --version");
+        //powershell.AddScript(@$"git commit -m 'added {addedCount} new and removed {removedCount} commands from the install script'");
+
+        //var results = await powershell.InvokeAsync();
+
+        //if (powershell.Streams.Error.Count > 0)
+        //{
+        //    throw powershell.Streams.Error[0].Exception;
+        //}
+        //Console.Clear();
+        //Console.BackgroundColor = ConsoleColor.White;
+        //Console.ForegroundColor = ConsoleColor.Black;
+        //foreach (var msg in results)
+        //{
+        //    Console.WriteLine(msg);
+        //}
+        //Console.ResetColor();
     }
     catch (Exception e)
     {
