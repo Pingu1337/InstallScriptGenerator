@@ -289,6 +289,7 @@ async Task InitializeGit()
     await RunProcessAsync(gitCommand, gitLfsTrack);
     await RunProcessAsync(gitCommand, gitLfsmigrate);
     Console.ResetColor();
+    Console.Clear();
 }
 
 async Task CommitChangesAsync()
