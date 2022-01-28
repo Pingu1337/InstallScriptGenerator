@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics;
-using System.Management.Automation;
 
 
 string[] separatingStrings = { "&&", "" };
@@ -236,13 +235,40 @@ while (true)
 
 
 
+static Task<int> RunProcessAsync(string fileName, string arg)
+{
+    var tcs = new TaskCompletionSource<int>();
+
+    var process = new Process
+    {
+        StartInfo = { FileName = fileName, Arguments = arg },
+        EnableRaisingEvents = true
+    };
+    process.StartInfo.EnvironmentVariables["GIT_ASK_YESNO"] = "false";
+    
+    process.Exited += (sender, args) =>
+    {
+        tcs.SetResult(process.ExitCode);
+        process.Dispose();
+    };
+
+    process.Start();
+
+    return tcs.Task;
+}
+
+
+
 async Task CommitChangesAsync()
 {
     string gitCommand = "git";
+    string gitLfsInstall = "lfs install";
+    string gitLfsTrack = @"lfs track ""*.exe""";
+    string gitLfsmigrate = @"git lfs migrate import --include=""*.exe""";
     string gitAddArgument = @"add -A";
     string gitVersionArgument = @"--version";
     string gitCommitArgument = @$"commit -m ""added {addedCount} new and removed {removedCount} commands from the install script""";
-    string gitPushArgument = @"push our_remote";
+    string gitPushArgument = @"push";
     try
     {
         Console.Clear();
@@ -261,14 +287,17 @@ async Task CommitChangesAsync()
         //{
         //    throw powershell.Streams.Error[0].Exception;
         //}
-        //Console.Clear();
-        //Console.BackgroundColor = ConsoleColor.White;
-        //Console.ForegroundColor = ConsoleColor.Black;
-        //foreach (var msg in results)
-        //{
-        //    Console.WriteLine(msg);
-        //}
-        //Console.ResetColor();
+        Console.Clear();
+        Console.BackgroundColor = ConsoleColor.White;
+        Console.ForegroundColor = ConsoleColor.DarkGreen;
+        await RunProcessAsync(gitCommand, gitVersionArgument);
+        await RunProcessAsync(gitCommand, gitLfsInstall);
+        await RunProcessAsync(gitCommand, gitLfsTrack);
+        await RunProcessAsync(gitCommand, gitLfsmigrate);
+        await RunProcessAsync(gitCommand, gitAddArgument);
+        await RunProcessAsync(gitCommand, gitCommitArgument);
+        await RunProcessAsync(gitCommand, gitPushArgument);
+        Console.ResetColor();
     }
     catch (Exception e)
     {
